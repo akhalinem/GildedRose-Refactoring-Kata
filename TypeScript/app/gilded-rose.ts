@@ -1,4 +1,5 @@
 enum ItemType {
+  Regular,
   AgedBrie = 'Aged Brie',
   BackstagePasses = 'Backstage passes to a TAFKAL80ETC concert',
   Sulfuras = 'Sulfuras, Hand of Ragnaros'
@@ -68,21 +69,18 @@ class SulfurasSeller extends Seller {
   public override update(): void { }
 }
 
+const itemSellersMap:Record<ItemType,typeof Seller> = {
+  [ItemType.AgedBrie]: AgedBrieSeller,
+  [ItemType.BackstagePasses]: BackstageSeller,
+  [ItemType.Sulfuras]: SulfurasSeller,
+  [ItemType.Regular]: Seller
+}
+
 class ItemSeller {
   static get(name: string, sellIn: number, quality: number): Seller {
-    switch (name) {
-      case ItemType.AgedBrie:
-        return new AgedBrieSeller(sellIn, quality);
+    const Seller = itemSellersMap[name] ?? itemSellersMap[ItemType.Regular];
 
-      case ItemType.BackstagePasses:
-        return new BackstageSeller(sellIn, quality);
-
-      case ItemType.Sulfuras:
-        return new SulfurasSeller(sellIn, quality);
-
-      default:
-        return new Seller(sellIn, quality);
-    }
+    return new Seller(sellIn, quality);
   }
 }
 
